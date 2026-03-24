@@ -1,1 +1,1431 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Regalo Cumple</title>
 
+  <meta name="description" content="Regalo Cumple">
+  <meta name="theme-color" content="#120609">
+  <meta name="robots" content="noindex,nofollow">
+
+  <style>
+    :root{
+      --bg: #090507;        /* era #090507 — ahora azul-gris como el fondo de la foto */
+      --wine: #16060a;      /* era #16060a */
+      --wine-2: #2a0e16;    /* era #2a0e16 */
+      --gold: #e0b45b; 
+      --text:#f8f4ef;
+      --muted:rgba(255,255,255,.76);
+      --soft:rgba(255,255,255,.08);
+      --border:rgba(255,255,255,.12);
+      --card:rgba(16,10,12,.34);
+      --shadow:0 24px 80px rgba(0,0,0,.50);
+    }
+
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    html,body{
+      width:100%;
+      height:100%;
+      margin:0;
+      overflow:hidden;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    body{
+      position:relative;
+    }
+
+    .bg{
+      position:fixed;
+      inset:0;
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+      transform:scale(1.04);
+      filter:brightness(.88) saturate(1.03);
+      transition:
+        opacity 1s ease,
+        transform 2.2s ease,
+        filter 1s ease;
+      opacity:0;
+    }
+
+    .bg.active{
+      opacity:1;
+      transform:scale(1);
+      filter:brightness(.95) saturate(1.08);
+    }
+
+    .bg-blur{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+      transform:scale(1.12);
+      filter:blur(26px) brightness(.62) saturate(1.05);
+      opacity:1;
+    }
+
+
+    .bg.fit-device{
+      background-size:contain;
+      background-position:center center;
+      background-color:transparent;
+    }
+    
+    @media (max-width: 760px){
+      .bg.fit-device{
+        background-size:cover;
+        background-position: 48.5% 28%;
+      }
+    }
+
+    .veil{
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.045) 0%, transparent 42%),
+        linear-gradient(to bottom, rgba(0,0,0,.06), rgba(0,0,0,.22)),
+        radial-gradient(circle at 50% 20%, transparent 0%, rgba(0,0,0,.06) 55%, rgba(0,0,0,.22) 100%);
+      pointer-events:none;
+      z-index:1;
+    }
+
+    .grain{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      opacity:.08;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.35) 0 1px, transparent 1px),
+        radial-gradient(circle at 80% 40%, rgba(255,255,255,.22) 0 1px, transparent 1px),
+        radial-gradient(circle at 40% 70%, rgba(255,255,255,.20) 0 1px, transparent 1px);
+      background-size: 160px 160px, 220px 220px, 180px 180px;
+      mix-blend-mode:screen;
+    }
+
+    .stage{
+      position:relative;
+      z-index:2;
+      width:100%;
+      height:100%;
+      padding:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .slide{
+      position:absolute;
+      width:min(980px, calc(100vw - 32px));
+      opacity:0;
+      transform:translateY(18px) scale(.985);
+      transition:
+        opacity .65s ease,
+        transform .75s cubic-bezier(.2,.8,.2,1);
+      pointer-events:none;
+      text-align:center;
+    }
+
+    .slide.active{
+      opacity:1;
+      transform:translateY(0) scale(1);
+      pointer-events:auto;
+    }
+
+    .card{
+      position:relative;
+      overflow:hidden;
+      padding:38px 28px 34px;
+      border-radius:30px;
+      background:
+        linear-gradient(180deg, rgba(34,18,23,.70), rgba(34,18,23,.62));
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:0 22px 70px rgba(0,0,0,.30);
+      backdrop-filter:blur(3px);
+      -webkit-backdrop-filter:blur(3px);
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(120deg, rgba(255,255,255,.05), transparent 32%, transparent 68%, rgba(255,255,255,.04));
+      pointer-events:none;
+    }
+
+    .slide-leiva .card{
+      background:
+        linear-gradient(180deg, rgba(62,45,36,.64), rgba(62,45,36,.56));
+      border:1px solid rgba(255,245,230,.16);
+      box-shadow:0 22px 70px rgba(0,0,0,.30);
+      backdrop-filter:blur(3px);
+      -webkit-backdrop-filter:blur(3px);
+    }
+      
+      .slide-leiva .card::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        background:
+          linear-gradient(120deg, rgba(255,255,255,.05), transparent 32%, transparent 68%, rgba(255,255,255,.03));
+        pointer-events:none;
+      }
+      
+      .slide-leiva .eyebrow{
+        color:rgba(255,245,230,.82);
+        border:1px solid rgba(255,245,230,.16);
+        background:rgba(255,245,230,.06);
+      }
+      
+      .slide-leiva .lead{
+        color:rgba(255,244,236,.90);
+      }
+      
+      .slide-leiva .hint{
+        color:rgba(255,244,236,.78);
+      }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:9px 15px;
+      border-radius:999px;
+      font-size:12px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.05);
+      margin-bottom:18px;
+    }
+
+    .eyebrow::before{
+      content:"";
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:var(--gold);
+      box-shadow:0 0 10px rgba(215,164,70,.55);
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(36px, 6vw, 78px);
+      line-height:.98;
+      letter-spacing:-.045em;
+      font-weight:900;
+      text-wrap:balance;
+      text-shadow:0 10px 30px rgba(0,0,0,.24);
+    }
+
+    h2{
+      margin:0;
+      font-size:clamp(28px, 5vw, 62px);
+      line-height:.98;
+      letter-spacing:-.045em;
+      font-weight:900;
+      text-wrap:balance;
+      text-shadow:0 10px 30px rgba(0,0,0,.24);
+    }
+
+    .lead{
+      max-width:760px;
+      margin:18px auto 0;
+      font-size:clamp(17px, 2.2vw, 24px);
+      line-height:1.5;
+      color:rgba(255,255,255,.90);
+      text-wrap:balance;
+      white-space:pre-line;
+    }
+
+    .accent{
+      color:var(--gold);
+    }
+
+    .countdown{
+      margin-top:30px;
+      display:grid;
+      grid-template-columns:repeat(4, minmax(78px, 140px));
+      gap:14px;
+      justify-content:center;
+    }
+
+    .time{
+      padding:18px 12px 14px;
+      border-radius:22px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+    .time strong{
+      display:block;
+      font-size:clamp(28px, 5vw, 52px);
+      line-height:1;
+      font-weight:900;
+    }
+
+    .time span{
+      display:block;
+      margin-top:8px;
+      font-size:12px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+
+    .hint{
+      margin-top:28px;
+      font-size:13px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.82);
+    }
+
+    .hint.pulse{
+      animation:pulseHint 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseHint{
+      0%,100%{opacity:.55}
+      50%{opacity:1}
+    }
+
+    .details{
+      display:inline-flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:22px;
+      padding:18px 22px;
+      border-radius:22px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    .details strong{
+      font-size:clamp(22px, 3.8vw, 34px);
+      letter-spacing:-.03em;
+    }
+
+    .details span{
+      font-size:16px;
+      color:rgba(255,255,255,.88);
+      white-space:pre-line;
+    }
+
+    .reveal-box{
+        margin-top:24px;
+        min-height:0;
+      }
+      
+      .reveal-image{
+        display:block;
+        margin:0 auto;
+        max-width:min(100%, 540px);
+        max-height:42vh;
+        border-radius:18px;
+        border:1px solid rgba(255,255,255,.14);
+        box-shadow:0 18px 40px rgba(0,0,0,.28);
+        opacity:0;
+        transform:translateY(18px) scale(.96);
+        transition:opacity .55s ease, transform .55s ease;
+        pointer-events:none;
+      }
+
+      .reveal4-box{
+        position:relative;
+        margin-top:28px;
+        width:100%;
+        min-height:420px;
+      }
+      
+      .reveal4-image{
+        position:absolute;
+        opacity:0;
+        transform:translateY(18px) scale(.96);
+        transition:opacity .55s ease, transform .55s ease;
+        border-radius:18px;
+        border:1px solid rgba(255,255,255,.14);
+        box-shadow:0 18px 40px rgba(0,0,0,.28);
+        pointer-events:none;
+      }
+      
+      .reveal4-image.visible{
+        opacity:1;
+        transform:translateY(0) scale(1);
+      }
+      
+      /* Escritorio: collage progresivo */
+      .reveal4-pos1{
+        top:0;
+        left:4%;
+        width:min(32%, 260px);
+      }
+      
+      .reveal4-pos2{
+        top:0;
+        right:4%;
+        width:min(32%, 260px);
+      }
+      
+      .reveal4-pos3{
+        bottom:0;
+        left:50%;
+        transform:translateX(-50%) translateY(18px) scale(.96);
+        width:min(34%, 280px);
+      }
+      
+      .reveal4-pos3.visible{
+        transform:translateX(-50%) translateY(0) scale(1);
+      }
+      
+      /* Móvil: una sola visible cada vez */
+      @media (max-width:760px){
+        .reveal4-box{
+          min-height:380px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+        }
+      
+        .reveal4-image{
+          top:50% !important;
+          left:50% !important;
+          right:auto !important;
+          bottom:auto !important;
+          width:auto !important;
+          max-width:min(100%, 320px) !important;
+          max-height:340px !important;
+          object-fit:contain;
+          transform:translate(-50%, -50%) translateY(18px) scale(.96);
+        }
+      
+        .reveal4-image.visible{
+          transform:translate(-50%, -50%) translateY(0) scale(1);
+        }
+      }
+      
+      .reveal-image.visible{
+        opacity:1;
+        transform:translateY(0) scale(1);
+      }
+      
+      @media (max-width:760px){
+        .reveal-image{
+          max-width:100%;
+          max-height:36vh;
+        }
+      }
+
+    .password-box{
+        max-width:460px;
+        margin:28px auto 0;
+        display:flex;
+        flex-direction:column;
+        gap:14px;
+      }
+      
+      .password-input{
+        width:100%;
+        padding:16px 18px;
+        border-radius:16px;
+        border:1px solid rgba(255,255,255,.18);
+        background:rgba(255,255,255,.08);
+        color:var(--text);
+        font-size:18px;
+        text-align:center;
+        outline:none;
+        backdrop-filter:blur(4px);
+        -webkit-backdrop-filter:blur(4px);
+      }
+      
+      .password-input::placeholder{
+        color:rgba(255,255,255,.55);
+      }
+      
+      .password-actions{
+        display:flex;
+        gap:12px;
+        justify-content:center;
+        flex-wrap:wrap;
+      }
+      
+      .password-btn{
+        appearance:none;
+        border:none;
+        cursor:pointer;
+        padding:12px 18px;
+        border-radius:14px;
+        font-size:15px;
+        font-weight:800;
+        transition:.18s ease;
+      }
+      
+      .password-btn.primary{
+        background:var(--gold);
+        color:#24170f;
+      }
+      
+      .password-btn.secondary{
+        background:rgba(255,255,255,.08);
+        color:var(--text);
+        border:1px solid rgba(255,255,255,.14);
+      }
+      
+      .password-btn:hover{
+        transform:translateY(-1px);
+        filter:brightness(1.04);
+      }
+      
+      .password-error{
+        min-height:22px;
+        font-size:14px;
+        color:#ffd2d2;
+        opacity:.95;
+      }
+      
+      .hints-box{
+        margin-top:12px;
+        display:flex;
+        flex-direction:column;
+        gap:8px;
+      }
+      
+      .hint-line{
+        font-size:15px;
+        color:rgba(255,255,255,.88);
+        background:rgba(255,255,255,.06);
+        border:1px solid rgba(255,255,255,.10);
+        border-radius:12px;
+        padding:10px 12px;
+      }
+      
+      .slide-password .card{
+        background:
+          linear-gradient(180deg, rgba(22,34,58,.58), rgba(22,34,58,.48));
+        border:1px solid rgba(214,186,122,.22);
+        box-shadow:0 22px 70px rgba(0,0,0,.30);
+        backdrop-filter:blur(3px);
+        -webkit-backdrop-filter:blur(3px);
+      }
+      
+      .slide-password .card::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        background:
+          linear-gradient(120deg, rgba(214,186,122,.07), transparent 32%, transparent 68%, rgba(255,255,255,.03));
+        pointer-events:none;
+      }
+    
+      .slide-password .eyebrow{
+        color:rgba(245,231,198,.88);
+        border:1px solid rgba(214,186,122,.22);
+        background:rgba(214,186,122,.07);
+      }
+
+      
+      @media (max-width:760px){
+        .password-actions{
+          flex-direction:column;
+        }
+      
+        .password-btn{
+          width:100%;
+        }
+      }
+
+    .nav{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:18px;
+      z-index:4;
+      display:flex;
+      justify-content:center;
+      pointer-events:none;
+    }
+
+    .dots{
+      display:flex;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(6px);
+    }
+
+    .dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:rgba(255,255,255,.26);
+      transition:transform .25s ease, background .25s ease;
+    }
+
+    .dot.active{
+      transform:scale(1.25);
+      background:var(--gold);
+      box-shadow:0 0 12px rgba(215,164,70,.45);
+    }
+
+    
+
+    @media (max-width:760px){
+      .card{
+        padding:26px 18px 24px;
+        border-radius:24px;
+      }
+
+      .countdown{
+        grid-template-columns:repeat(2, minmax(110px, 1fr));
+      }
+
+      
+    }
+
+    
+    .gift-wrap{
+      position:fixed;
+      inset:0;
+      z-index:10;
+      overflow:hidden;
+      cursor:pointer;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.05) 0%, transparent 42%),
+        linear-gradient(180deg, rgba(8,10,18,.28), rgba(8,10,18,.38));
+      transition:opacity .45s ease, visibility .45s ease;
+    }
+
+    .gift-wrap.hidden{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    .gift-wrap__panel{
+      position:absolute;
+      top:0;
+      bottom:0;
+      width:50.5%;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.06), transparent 34%, transparent 62%, rgba(255,255,255,.03)),
+        linear-gradient(180deg, rgba(190,165,124,.18), rgba(122,88,58,.14)),
+        repeating-linear-gradient(
+          45deg,
+          rgba(255,255,255,.03) 0 12px,
+          rgba(0,0,0,.02) 12px 24px
+        ),
+        linear-gradient(180deg, #7d5b43, #5c4031);
+      box-shadow:inset 0 0 80px rgba(0,0,0,.18);
+      transition:
+        transform 1.05s cubic-bezier(.22,.8,.16,1),
+        opacity .85s ease,
+        filter .85s ease;
+      will-change:transform, opacity;
+    }
+
+    .gift-wrap__panel--left{
+      left:0;
+      border-right:4px solid rgba(232,210,170,.24);
+    }
+
+    .gift-wrap__panel--right{
+      right:0;
+      border-left:4px solid rgba(232,210,170,.24);
+    }
+
+    .gift-wrap__panel::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(90deg, transparent 0 44%, rgba(194,42,57,.85) 44% 56%, transparent 56% 100%);
+      opacity:.95;
+      mix-blend-mode:screen;
+    }
+
+    .gift-wrap__panel::after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      top:50%;
+      height:22px;
+      transform:translateY(-50%);
+      background:rgba(194,42,57,.9);
+      box-shadow:0 0 24px rgba(194,42,57,.16);
+    }
+
+    .gift-wrap__center{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      z-index:2;
+      pointer-events:none;
+    }
+
+    .gift-bow{
+      position:relative;
+      width:180px;
+      height:150px;
+      margin-bottom:22px;
+      filter:drop-shadow(0 18px 34px rgba(0,0,0,.28));
+      transition:
+        transform .9s cubic-bezier(.22,.8,.16,1),
+        opacity .7s ease;
+      will-change:transform, opacity;
+    }
+
+    .gift-bow__loop{
+      position:absolute;
+      top:22px;
+      width:76px;
+      height:76px;
+      border:16px solid #c22a39;
+      border-radius:50% 50% 46% 46%;
+      background:rgba(255,255,255,.03);
+    }
+
+    .gift-bow__loop--left{
+      left:10px;
+      transform:rotate(-22deg);
+    }
+
+    .gift-bow__loop--right{
+      right:10px;
+      transform:rotate(22deg);
+    }
+
+    .gift-bow__knot{
+      position:absolute;
+      left:50%;
+      top:52px;
+      width:42px;
+      height:42px;
+      transform:translateX(-50%);
+      border-radius:14px;
+      background:#d53a48;
+      box-shadow:inset 0 2px 8px rgba(255,255,255,.16);
+    }
+
+    .gift-bow__tail{
+      position:absolute;
+      top:84px;
+      width:22px;
+      height:88px;
+      background:linear-gradient(180deg, #d53a48, #b11f30);
+      border-radius:12px;
+    }
+
+    .gift-bow__tail--left{
+      left:68px;
+      transform:rotate(8deg);
+    }
+
+    .gift-bow__tail--right{
+      right:68px;
+      transform:rotate(-8deg);
+    }
+
+    .gift-wrap__text{
+      text-align:center;
+      padding:18px 20px;
+      border-radius:22px;
+      background:rgba(22,18,16,.26);
+      border:1px solid rgba(255,245,230,.14);
+      backdrop-filter:blur(6px);
+      -webkit-backdrop-filter:blur(6px);
+      box-shadow:0 16px 40px rgba(0,0,0,.18);
+      transition:
+        transform .75s cubic-bezier(.22,.8,.16,1),
+        opacity .55s ease;
+    }
+
+    .gift-wrap__eyebrow{
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:rgba(255,238,214,.82);
+      margin-bottom:10px;
+    }
+
+    .gift-wrap__title{
+      font-size:clamp(24px, 4.2vw, 42px);
+      font-weight:900;
+      letter-spacing:-.04em;
+      color:#fff6ea;
+      text-shadow:0 8px 24px rgba(0,0,0,.28);
+    }
+
+    .gift-wrap.opening .gift-wrap__panel--left{
+      transform:translateX(-108%) rotate(-8deg);
+      opacity:.94;
+      filter:blur(1px);
+    }
+
+    .gift-wrap.opening .gift-wrap__panel--right{
+      transform:translateX(108%) rotate(8deg);
+      opacity:.94;
+      filter:blur(1px);
+    }
+
+    .gift-wrap.opening .gift-bow{
+      transform:translateY(-28px) scale(.72) rotate(10deg);
+      opacity:0;
+    }
+
+    .gift-wrap.opening .gift-wrap__text{
+      transform:translateY(16px) scale(.96);
+      opacity:0;
+    }
+
+    @media (max-width:760px){
+      .gift-bow{
+        width:140px;
+        height:118px;
+        margin-bottom:18px;
+      }
+
+      .gift-bow__loop{
+        width:58px;
+        height:58px;
+        border-width:12px;
+      }
+
+      .gift-bow__knot{
+        width:34px;
+        height:34px;
+        top:42px;
+      }
+
+      .gift-bow__tail{
+        width:18px;
+        height:70px;
+        top:68px;
+      }
+
+      .gift-bow__tail--left{ left:53px; }
+      .gift-bow__tail--right{ right:53px; }
+
+      .gift-wrap__panel::after{
+        height:18px;
+      }
+
+      .gift-wrap__text{
+        padding:16px 18px;
+        width:min(92vw, 360px);
+      }
+    }
+
+
+
+    
+  </style>
+</head>
+<body>
+  <div class="bg-blur" id="bgBlur"></div>
+  <div class="bg active" id="bg"
+       style="background-image:
+         linear-gradient(rgba(18,6,9,.14), rgba(18,6,9,.14)),
+         url('https://juanzx212.github.io/regaloCumple/assets/img/bg02.png');"></div>
+
+  <div class="veil"></div>
+  <div class="grain"></div>
+
+  <div class="gift-wrap" id="giftWrap" aria-label="Abrir regalo" role="button" tabindex="0">
+    <div class="gift-wrap__panel gift-wrap__panel--left"></div>
+    <div class="gift-wrap__panel gift-wrap__panel--right"></div>
+  
+    <div class="gift-wrap__center">
+      <div class="gift-bow">
+        <span class="gift-bow__loop gift-bow__loop--left"></span>
+        <span class="gift-bow__loop gift-bow__loop--right"></span>
+        <span class="gift-bow__knot"></span>
+        <span class="gift-bow__tail gift-bow__tail--left"></span>
+        <span class="gift-bow__tail gift-bow__tail--right"></span>
+      </div>
+  
+      <div class="gift-wrap__text">
+        <div class="gift-wrap__eyebrow">Tu regalo</div>
+        <div class="gift-wrap__title">Toca para abrir</div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="bgMusic" preload="auto">
+    <source src="https://juanzx212.github.io/regaloCumple/assets/audio/cancion.mp3" type="audio/mp4">
+    <source src="https://juanzx212.github.io/regaloCumple/assets/audio/cancion.mp3" type="audio/mpeg">
+    Tu navegador no soporta audio.
+  </audio>
+
+
+  <main class="stage" id="stage">
+
+    <!-- 0 -->
+      <section class="slide slide-password active" data-bg="bg02.png">
+        <div class="card">
+          <div class="eyebrow">Antes de empezar</div>
+          <h2>Para desbloquear el regalo debes introducir la contraseña</h2>
+          <p class="lead">Cuando la aciertes, podrás descubrir la sorpresa</p>
+      
+          <div class="password-box">
+            <input
+              id="passwordInput"
+              class="password-input"
+              type="password"
+              placeholder="Escribe la contraseña"
+              autocomplete="off"
+              autocapitalize="none"
+              spellcheck="false"
+            >
+      
+            <div class="password-actions">
+              <button id="passwordSubmit" class="password-btn primary">Enviar</button>
+              <button id="hintButton" class="password-btn secondary">Pista</button>
+            </div>
+      
+            <div id="passwordError" class="password-error"></div>
+      
+            <div id="hintsBox" class="hints-box"></div>
+          </div>
+        </div>
+      </section>
+    
+    <!-- 1 -->
+    <section class="slide" data-bg="bg1.png">
+      <div class="card">
+        <div class="eyebrow">Hay algo esperándote</div>
+        <h1>Falta muy poco para algo especial</h1>
+        <p class="lead">Todavía no te voy a decir qué es. Primero, mira cuánto queda.</p>
+
+        <div class="countdown">
+          <div class="time">
+            <strong id="days">00</strong>
+            <span>Días</span>
+          </div>
+          <div class="time">
+            <strong id="hours">00</strong>
+            <span>Horas</span>
+          </div>
+          <div class="time">
+            <strong id="minutes">00</strong>
+            <span>Minutos</span>
+          </div>
+          <div class="time">
+            <strong id="seconds">00</strong>
+            <span>Segundos</span>
+          </div>
+        </div>
+
+        <div class="hint pulse">Toca para continuar</div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="slide" data-bg="bg2.png">
+      <div class="card">
+        <div class="eyebrow">Un pequeño secreto</div>
+        <h1>No todos los regalos se envuelven</h1>
+        <p class="lead">Algunos no caben en una caja. Algunos se viven.</p>
+        <div class="hint pulse">Toca para continuar</div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <!--<section class="slide" data-bg="bg3.jpg">
+      <div class="card">
+        <div class="eyebrow">Una noche</div>
+        <h1>Quería regalarte algo más que una cosa</h1>
+        <p class="lead">Quería regalarte un momento. Una noche distinta. Un recuerdo futuro.</p>
+        <div class="hint pulse">Toca para continuar</div> 
+      </div>
+    </section>-->
+
+    <section class="slide" data-bg="bg3.jpg">
+      <div class="card">
+        <div class="eyebrow">Un recuerdo</div>
+        <h1>¿Recuerdas esta lista?</h1>
+    
+        <div class="reveal-box" id="listRevealBox">
+          <img
+            id="listImage"
+            class="reveal-image"
+            src="https://juanzx212.github.io/regaloCumple/assets/img/lista.png"
+            alt="Lista de planes"
+          >
+        </div>
+    
+        <div class="hint pulse" id="slide3Hint">Toca para continuar</div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <!--<section class="slide" data-bg="bg4.jpg">
+      <div class="card">
+        <div class="eyebrow">Más cerca</div>
+        <h1>Una noche distinta</h1>
+        <p class="lead">Con música.
+Con emoción.
+Y conmigo.</p>
+        <div class="hint pulse">Toca para continuar</div>
+      </div>
+    </section> -->
+
+    <section class="slide" data-bg="bg4.jpg">
+      <div class="card">
+        <div class="eyebrow">Más cerca</div>
+        <h1>Poco a poco se va completando</h1>
+    
+        <div class="reveal4-box" id="reveal4Box">
+          <img
+            id="reveal4Img1"
+            class="reveal4-image reveal4-pos1"
+            src="https://juanzx2122.github.io/regaloCumple/assets/img/foto1.jpg"
+            alt="Foto 1"
+          >
+          <img
+            id="reveal4Img2"
+            class="reveal4-image reveal4-pos2"
+            src="https://juanzx212.github.io/regaloCumple/assets/img/foto2.jpg"
+            alt="Foto 2"
+          >
+          <img
+            id="reveal4Img3"
+            class="reveal4-image reveal4-pos3"
+            src="https://juanzx212.github.io/regaloCumple/assets/img/foto3.jpg"
+            alt="Foto 3"
+          >
+        </div>
+    
+        <div class="hint pulse" id="slide4Hint">Toca para continuar</div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="slide" data-bg="bg5.jpg">
+      <div class="card">
+        <div class="eyebrow">Casi casi</div>
+        <h1>Hay noches que se sienten especiales incluso antes de empezar</h1>
+        <p class="lead">Y esta es una de ellas.</p>
+        <div class="hint pulse">Toca para continuar</div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="slide" data-bg="bg61.png">
+      <div class="card">
+        <div class="eyebrow">Tu sorpresa</div>
+        <h1>Martes 8 de septiembre · 21:00</h1>
+        <!--<div class="details">
+          <strong>Prepárate.</strong>
+          <span>Porque esta noche ya tiene nombre.</span>
+        </div>-->
+        <p class="lead">Sube el volúmen</p>
+        <div class="hint pulse">Toca para continuar</div>
+      </div>
+    </section>
+
+
+    <!-- 6 -->
+    <section class="slide slide-leiva" data-bg="bg7.jpg">
+      <div class="card">
+        <div class="eyebrow">Ahora sí</div>
+        <h1>Prepárate porque nos vamos a ver a Leiva</h1>
+        <p class="lead">Tour <span class="accent">Gigante</span>.</p>
+        <div class="hint pulse">Toca para continuar</div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="nav">
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <script>
+      const concertDate = new Date("2026-09-08T21:00:00");
+      const slides = [...document.querySelectorAll(".slide")];
+      const bg = document.getElementById("bg");
+      const bgBlur = document.getElementById("bgBlur");
+      const dotsWrap = document.getElementById("dots");
+      const stage = document.getElementById("stage");
+      const bgMusic = document.getElementById("bgMusic");
+
+      const giftWrap = document.getElementById("giftWrap");
+
+      const passwordInput = document.getElementById("passwordInput");
+      const passwordSubmit = document.getElementById("passwordSubmit");
+      const hintButton = document.getElementById("hintButton");
+      const passwordError = document.getElementById("passwordError");
+      const hintsBox = document.getElementById("hintsBox");
+
+      const listImage = document.getElementById("listImage");
+      const slide3Hint = document.getElementById("slide3Hint");
+
+      const reveal4Img1 = document.getElementById("reveal4Img1");
+      const reveal4Img2 = document.getElementById("reveal4Img2");
+      const reveal4Img3 = document.getElementById("reveal4Img3");
+      const slide4Hint = document.getElementById("slide4Hint");
+      
+      bgBlur.style.backgroundImage =
+        `linear-gradient(rgba(18,6,9,.12), rgba(18,6,9,.12)), url('https://juanzx212.github.io/regaloCumple/assets/img/bg02.png')`;
+    
+      let current = 0;
+      let locked = false;
+      let unlocked = false;
+      let giftOpened = false;
+
+      let slide3Revealed = false;
+
+      let slide4Step = 0;
+
+      const correctPassword = "1234";
+      const hints = ["pista1", "pista2", "pista3"];
+      let shownHints = 0;
+    
+      // Dots
+      slides.forEach((_, i) => {
+        const dot = document.createElement("div");
+        dot.className = "dot" + (i === 0 ? " active" : "");
+        dotsWrap.appendChild(dot);
+      });
+      const dots = [...document.querySelectorAll(".dot")];
+    
+      function vibrate(ms = 18){
+        if (navigator.vibrate) navigator.vibrate(ms);
+      }
+
+      function openGiftWrap(){
+        if (giftOpened || !giftWrap) return;
+      
+        giftOpened = true;
+        locked = true;
+        vibrate(24);
+      
+        giftWrap.classList.add("opening");
+      
+        setTimeout(() => {
+          giftWrap.classList.add("hidden");
+          locked = false;
+        }, 1050);
+      }
+
+      function tryPassword(){
+        const value = passwordInput.value.trim().toLowerCase();
+      
+        if (value === correctPassword) {
+          passwordError.textContent = "";
+          passwordInput.value = "";
+          unlocked = true;
+          showSlide(1);
+        } else {
+          passwordError.textContent = "Contraseña incorrecta.";
+        }
+      }
+
+      function showNextHint(){
+        if (shownHints < hints.length) {
+          const div = document.createElement("div");
+          div.className = "hint-line";
+          div.textContent = hints[shownHints];
+          hintsBox.appendChild(div);
+          shownHints++;
+        }
+      }
+
+      passwordSubmit.addEventListener("click", (e) => {
+        e.stopPropagation();
+        tryPassword();
+      });
+      
+      hintButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        showNextHint();
+      });
+      
+      passwordInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          tryPassword();
+        }
+      });
+
+
+      if (giftWrap){
+        giftWrap.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openGiftWrap();
+        });
+      
+        giftWrap.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " "){
+            e.preventDefault();
+            openGiftWrap();
+          }
+        });
+      }
+    
+    
+      function setBackground(file){
+        bg.classList.remove("active");
+        bg.classList.remove("fit-device");
+      
+        // fondo difuminado siempre con la misma imagen
+        bgBlur.style.backgroundImage =
+          `linear-gradient(rgba(18,6,9,.12), rgba(18,6,9,.12)), url('https://juanzx212.github.io/regaloCumple/assets/img/${file}')`;
+      
+        // bg7 tiene tratamiento especial
+        if (file === "bg7.jpg") {
+          bg.classList.add("fit-device");
+        }
+      
+        setTimeout(() => {
+          bg.style.backgroundImage =
+            `linear-gradient(rgba(18,6,9,.14), rgba(18,6,9,.14)), url('https://juanzx212.github.io/regaloCumple/assets/img/${file}')`;
+          bg.classList.add("active");
+        }, 170);
+      }
+
+      function handleMusicForSlide(index){
+        const isLeivaSlide = index === slides.length - 1;
+      
+        if (isLeivaSlide) {
+          bgMusic.currentTime = 0;
+          bgMusic.play().catch(() => {
+            console.log("El navegador ha bloqueado la reproducción automática.");
+          });
+        } else {
+          bgMusic.pause();
+          bgMusic.currentTime = 0;
+        }
+      }
+
+
+      function resetSlide3Reveal(){
+        slide3Revealed = false;
+        if (listImage) listImage.classList.remove("visible");
+        if (slide3Hint) slide3Hint.textContent = "Toca para continuar";
+      }
+
+      function resetSlide4Reveal(){
+        slide4Step = 0;
+      
+        if (reveal4Img1) reveal4Img1.classList.remove("visible");
+        if (reveal4Img2) reveal4Img2.classList.remove("visible");
+        if (reveal4Img3) reveal4Img3.classList.remove("visible");
+      
+        if (slide4Hint) slide4Hint.textContent = "Toca para continuar";
+      }
+      
+      function revealNextSlide4Image(){
+        if (slide4Step < 3) {
+          slide4Step++;
+          renderSlide4State();
+        }
+      }
+
+      
+
+      function renderSlide4State(){
+        const isMobile = window.innerWidth <= 760;
+      
+        if (!reveal4Img1 || !reveal4Img2 || !reveal4Img3) return;
+      
+        reveal4Img1.classList.remove("visible");
+        reveal4Img2.classList.remove("visible");
+        reveal4Img3.classList.remove("visible");
+      
+        if (isMobile) {
+          if (slide4Step === 1) reveal4Img1.classList.add("visible");
+          if (slide4Step === 2) reveal4Img2.classList.add("visible");
+          if (slide4Step === 3) reveal4Img3.classList.add("visible");
+        } else {
+          if (slide4Step >= 1) reveal4Img1.classList.add("visible");
+          if (slide4Step >= 2) reveal4Img2.classList.add("visible");
+          if (slide4Step >= 3) reveal4Img3.classList.add("visible");
+        }
+      
+        if (slide4Hint) {
+          slide4Hint.textContent = slide4Step < 3 ? "Toca para seguir" : "Toca para continuar";
+          if (slide4Step === 0) slide4Hint.textContent = "Toca para continuar";
+        }
+      }
+    
+      function showSlide(index){
+        if (locked || index < 0 || index >= slides.length) return;
+      
+        // Una vez desbloqueado, no permitir volver a la slide 0
+        if (unlocked && index === 0) return;
+      
+        locked = true;
+    
+        slides[current].classList.remove("active");
+        dots[current].classList.remove("active");
+    
+        current = index;
+
+    
+        const bgFile = slides[current].dataset.bg;
+        if (bgFile) setBackground(bgFile);
+    
+        setTimeout(() => {
+          slides[current].classList.add("active");
+          dots[current].classList.add("active");
+
+          if (current === 4) {
+            renderSlide4State();
+          }
+          
+          vibrate(12);
+          handleMusicForSlide(current);
+        }, 40);
+    
+        setTimeout(() => locked = false, 700);
+      }
+    
+      function nextSlide(){
+        if (current < slides.length - 1){
+          showSlide(current + 1);
+        } else {
+          showSlide(1);
+        }
+      }
+    
+      function prevSlide(){
+        if (current > 1){
+          showSlide(current - 1);
+        }
+      }
+    
+      stage.addEventListener("click", (e) => {
+        if (["BUTTON","A","INPUT"].includes(e.target.tagName)) return;
+      
+        // En la slide 0 no se puede avanzar sin contraseña
+        if (current === 0) return;
+      
+        const x = e.clientX;
+        const screenMiddle = window.innerWidth / 2;
+        const isLeft = x < screenMiddle;
+        const isMobile = window.innerWidth <= 760;
+      
+        // Slide 3: primer click revela la lista
+        if (current === 3 && !slide3Revealed) {
+          slide3Revealed = true;
+          listImage.classList.add("visible");
+          slide3Hint.textContent = "Toca para seguir";
+          return;
+        }
+      
+        // Slide 4 en móvil: navegación interna reversible
+        if (current === 4 && isMobile) {
+          if (isLeft) {
+            if (slide4Step > 1) {
+              slide4Step--;
+              renderSlide4State();
+              return;
+            }
+            if (slide4Step === 1) {
+              showSlide(3);
+              return;
+            }
+            // si slide4Step === 0, comportamiento normal:
+            prevSlide();
+            return;
+          } else {
+            if (slide4Step < 3) {
+              slide4Step++;
+              renderSlide4State();
+              return;
+            }
+            nextSlide();
+            return;
+          }
+        }
+      
+        // Slide 4 en escritorio: revelar progresivamente y luego navegar
+        if (current === 4 && !isMobile) {
+          if (slide4Step < 3) {
+            revealNextSlide4Image();
+            return;
+          }
+        }
+      
+        if (isLeft) {
+          prevSlide();
+        } else {
+          nextSlide();
+        }
+      });
+    
+      document.addEventListener("keydown", (e) => {
+        if (current === 0 && document.activeElement !== passwordInput) {
+          if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter" || e.key === "ArrowLeft") {
+            e.preventDefault();
+            return;
+          }
+        }
+      
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter"){
+          e.preventDefault();
+          nextSlide();
+        }
+        if (e.key === "ArrowLeft"){
+          e.preventDefault();
+          prevSlide();
+        }
+      });
+    
+      function updateCountdown(){
+        const now = new Date();
+        const diff = concertDate - now;
+    
+        const d = document.getElementById("days");
+        const h = document.getElementById("hours");
+        const m = document.getElementById("minutes");
+        const s = document.getElementById("seconds");
+    
+        if (diff <= 0){
+          d.textContent = "00";
+          h.textContent = "00";
+          m.textContent = "00";
+          s.textContent = "00";
+          return;
+        }
+    
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+    
+        d.textContent = String(days).padStart(2, "0");
+        h.textContent = String(hours).padStart(2, "0");
+        m.textContent = String(minutes).padStart(2, "0");
+        s.textContent = String(seconds).padStart(2, "0");
+      }
+    
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
